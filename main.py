@@ -1,6 +1,7 @@
 import os
 from modules.dotenv import load_dotenv
 import modules.courses as courses
+import modules.modules as modules
 
 load_dotenv()
 
@@ -11,3 +12,6 @@ course_list = courses.get_courses()
 networks = courses.get_course_by_name(course_list, "INTRO TO COMPUTER NETWORKS (CS_372_501_F2023)")
 
 print(networks)
+
+mod = modules.modules
+
