@@ -1,4 +1,5 @@
 import os
+import json
 import urllib.request
 import urllib.parse
 
@@ -29,7 +30,13 @@ def canvas_post(url, data=None, auth=True):
 
         data["access_token"] = os.environ["CANVAS_API_ACCESS_TOKEN"]
 
-    return post(url, data)
+    print(f"1>>> {url} >>> {data}")
+
+    headers = {
+        "Authorization": f'Bearer {os.environ["CANVAS_API_ACCESS_TOKEN"]}'
+    }
+
+    return post_put(url, data, headers, "POST")
 
 def get(url, data=None):
     if data is not None:
@@ -43,9 +50,13 @@ def get(url, data=None):
 
     return data, resp.getheaders()
 
-def post(url, data=None):
-    req = urllib.request.Request(url, data, method='POST')
+def post_put(url, data=None, headers=None, method="POST"):
+    if data is not None:
+        data = urllib.parse.urlencode(data).encode()
 
+    req = urllib.request.Request(url, data=data, headers=headers, method=method)
+
+    print(f"2>>> {req}")
     resp = urllib.request.urlopen(req)
 
     data = resp.read()

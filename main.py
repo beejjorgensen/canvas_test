@@ -1,7 +1,7 @@
 import os
-from modules.dotenv import load_dotenv
-import modules.courses as courses
-import modules.modules as modules
+from mods.dotenv import load_dotenv
+import mods.courses as courses
+import mods.modules as modules
 
 load_dotenv()
 
@@ -13,5 +13,7 @@ networks = courses.get_course_by_name(course_list, "INTRO TO COMPUTER NETWORKS (
 
 print(networks)
 
-mod = modules.modules
+m = modules.add_module(networks["id"], "Test Module, Ignore")
+
+print(m)
 

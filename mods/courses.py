@@ -1,4 +1,4 @@
-from modules.request import canvas_get
+from mods.request import canvas_get
 import json
 
 def get_courses():
