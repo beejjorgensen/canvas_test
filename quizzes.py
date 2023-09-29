@@ -1,3 +1,4 @@
+import sys
 import os
 import json
 from mods.dotenv import load_dotenv
@@ -5,6 +6,9 @@ import mods.courses as courses
 import mods.modules as modules
 import mods.pages as pages
 import mods.quizzes as quizzes
+
+quizzes.create_quiz("quiz-1.txt")
+sys.exit(0)
 
 load_dotenv()
 
