@@ -60,7 +60,12 @@ def get(url, data=None):
 
 def post_put(url, data=None, headers=None, method="POST"):
     if data is not None:
-        data = urllib.parse.urlencode(data).encode()
+        #data = urllib.parse.urlencode(data).encode()
+        data = json.dumps(data).encode()
+
+    headers['Content-Type'] = "application/json"
+    print(data)
+    print(headers)
 
     req = urllib.request.Request(url, data=data, headers=headers, method=method)
 

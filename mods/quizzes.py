@@ -1,4 +1,4 @@
-from mods.request import canvas_get
+from mods.request import canvas_get, canvas_post
 import json
 import re
 
@@ -19,7 +19,17 @@ def get_quiz_questions(course_id, quiz_id):
 
     return json.loads(data)
 
-def create_quiz(filename):
+def create_quiz(course_id, qdata):
+    data, _ = canvas_post(f'courses/{course_id}/quizzes', qdata)
+
+    return json.loads(data)
+
+def create_quiz_question(course_id, quiz_id, qdata):
+    data, _ = canvas_post(f'courses/{course_id}/quizzes/{quiz_id}/questions', qdata)
+
+    return json.loads(data)
+
+def create_quiz_from_file(course_id, filename):
 
     def split_kv(s):
         try:
@@ -42,6 +52,8 @@ def create_quiz(filename):
     description = ""
     shuffle = True
 
+    quiz_data = {}
+
     current_question = None
     qnum = 0
 
@@ -55,19 +67,17 @@ def create_quiz(filename):
 
             if line == '' or line[0] == '#': continue
 
-            print(line)
-
             if line[:9] == "QUESTION=":
                 preamble = False
 
             if preamble:
                 match split_kv(line):
                     case ["TITLE", x]:
-                        title = x
+                        quiz_data["title"] = x;
                     case ["DESC", x]:
-                        desc = x
+                        quiz_data["description"] = x
                     case ["SHUFFLE", x]:
-                        shuffle = x[0].lower() == "t"
+                        quiz_data["shuffle_answers"] = "true" if x[0].lower() == "t" else "false"
 
                 # Keep processing preamble
                 continue
@@ -80,39 +90,53 @@ def create_quiz(filename):
                         qlist.append(current_question)
 
                     qnum += 1
+                    anum = 0
 
                     if qname == '':
                         qname = f"Question {qnum}"
 
                     current_question = {
                         "question_name": qname,
-                        "answers": []
+                        "answers": {}
                     }
 
                 case ['POINTS', qpoints]:
                     current_question["points_possible"] = int(qpoints)
+                    pass
 
                 case ['TYPE', qtype]:
                     current_question["question_type"] = typemap[qtype.lower()]
+                    pass
 
                 case ['TEXT', qtext]:
                     current_question["question_text"] = qtext
+                    pass
 
                 case ['C', atext]:
-                    current_question["answers"].append({
+                    current_question["answers"][str(anum)] = {
                         "answer_text": atext,
                         "answer_weight": 100
-                    })
+                    }
+                    anum += 1
 
                 case ['N', atext]:
-                    current_question["answers"].append({
+                    current_question["answers"][str(anum)] = {
                         "answer_text": atext,
                         "answer_weight": 0
-                    })
+                    }
+                    anum += 1
+                    pass
+
 
     # Create the quiz
-    print(qlist)
-    print(json.dumps(qlist, indent=4))
+    print("Creating quiz")
+    quiz_res = create_quiz(course_id, { "quiz": quiz_data })
+    quiz_id = quiz_res["id"]
 
     # Create the questions
+    for q in qlist:
+        print(f"Creating {q['question_name']}")
+        print(json.dumps(q, indent=4))
+        create_quiz_question(course_id, quiz_id, { "question": q })
+        break
 

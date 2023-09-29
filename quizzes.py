@@ -7,8 +7,6 @@ import mods.modules as modules
 import mods.pages as pages
 import mods.quizzes as quizzes
 
-quizzes.create_quiz("quiz-1.txt")
-sys.exit(0)
 
 load_dotenv()
 
@@ -19,19 +17,15 @@ course_list = courses.get_courses()
 networks = courses.get_course_by_name(course_list, "INTRO TO COMPUTER NETWORKS (CS_372_501_F2023)")
 
 nid = networks["id"]
+print(nid)
 
-#print(nid)
+quizzes.create_quiz_from_file(nid, "quiz-1.txt")
+sys.exit(0)
 
 qzs = quizzes.get_quizzes(nid)
-
 #print(json.dumps(qzs, indent=4))
-
 syl_quiz = quizzes.get_quiz_by_title(qzs, "Test Quiz")
-
-print(json.dumps(syl_quiz, indent=4))
-
+#print(json.dumps(syl_quiz, indent=4))
 syl_quiz_id = syl_quiz["id"]
-
 qs = quizzes.get_quiz_questions(nid, syl_quiz_id)
-
 print(json.dumps(qs, indent=4))
