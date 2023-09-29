@@ -138,5 +138,4 @@ def create_quiz_from_file(course_id, filename):
         print(f"Creating {q['question_name']}")
         print(json.dumps(q, indent=4))
         create_quiz_question(course_id, quiz_id, { "question": q })
-        break
 
