@@ -12,6 +12,8 @@ def canvas_full_url(url):
 def canvas_get(url, data=None, auth=True):
     url = canvas_full_url(url)
 
+    print(f"URL: {url}")
+
     if auth:
         if data is None:
             data = {}
@@ -22,15 +24,21 @@ def canvas_get(url, data=None, auth=True):
     return get(url, data)
 
 def canvas_post(url, data=None, auth=True):
+    return canvas_post_put(url, data, auth, method="POST")
+
+def canvas_put(url, data=None, auth=True):
+    return canvas_post_put(url, data, auth, method="PUT")
+
+def canvas_post_put(url, data=None, auth=True, method="POST"):
     url = canvas_full_url(url)
+
+    print(f"URL: {url}")
 
     if auth:
         if data is None:
             data = {}
 
         data["access_token"] = os.environ["CANVAS_API_ACCESS_TOKEN"]
-
-    print(f"1>>> {url} >>> {data}")
 
     headers = {
         "Authorization": f'Bearer {os.environ["CANVAS_API_ACCESS_TOKEN"]}'
@@ -56,7 +64,6 @@ def post_put(url, data=None, headers=None, method="POST"):
 
     req = urllib.request.Request(url, data=data, headers=headers, method=method)
 
-    print(f"2>>> {req}")
     resp = urllib.request.urlopen(req)
 
     data = resp.read()

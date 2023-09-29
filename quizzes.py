@@ -1,8 +1,10 @@
 import os
+import json
 from mods.dotenv import load_dotenv
 import mods.courses as courses
 import mods.modules as modules
 import mods.pages as pages
+import mods.quizzes as quizzes
 
 load_dotenv()
 
@@ -12,13 +14,20 @@ course_list = courses.get_courses()
 
 networks = courses.get_course_by_name(course_list, "INTRO TO COMPUTER NETWORKS (CS_372_501_F2023)")
 
-print(networks)
+nid = networks["id"]
 
-#m = modules.add_module(networks["id"], "Test Module, Ignore")
+#print(nid)
 
-#print(m)
+qzs = quizzes.get_quizzes(nid)
 
-#p = pages.update_page(networks["id"], "test-page-id", "Test Page Title", "<h1>Test Page Body</h1>This is <i>the</i> page body.")
-p = pages.update_page(networks["id"], "", "Test Page Title", "<h1>Test Page Body</h1>This is <i>the</i> page body.")
+#print(json.dumps(qzs, indent=4))
 
-print(p)
+syl_quiz = quizzes.get_quiz_by_title(qzs, "Test Quiz")
+
+print(json.dumps(syl_quiz, indent=4))
+
+syl_quiz_id = syl_quiz["id"]
+
+qs = quizzes.get_quiz_questions(nid, syl_quiz_id)
+
+print(json.dumps(qs, indent=4))
